@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace VoxelRenderTest
 {
-    public class MeshVoxel1
+    public class VoxelGrid1
     {
         private struct Voxel
         {
@@ -21,7 +21,7 @@ namespace VoxelRenderTest
         private Voxel[] _voxelData;
         private DDATracer _ddaTracer;
 
-        public MeshVoxel1(
+        public VoxelGrid1(
             int sizeX, int sizeY, int sizeZ,
             Vector3 boundLow,
             Vector3 boundHigh)

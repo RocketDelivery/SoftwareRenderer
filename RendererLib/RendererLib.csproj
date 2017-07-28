@@ -58,7 +58,7 @@
     <Compile Include="Triangle.cs" />
     <Compile Include="RayTracer.cs" />
     <Compile Include="Mesh.cs" />
-    <Compile Include="MeshVoxel1.cs" />
+    <Compile Include="VoxelGrid1.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="SATCollisionSolver.cs" />
     <Compile Include="TraceResult.cs" />
