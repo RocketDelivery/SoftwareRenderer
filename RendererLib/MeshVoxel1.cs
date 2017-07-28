@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace VoxelRenderTest
 {
-    public class MeshVoxel1 : Traceable
+    public class MeshVoxel1
     {
         private struct Voxel
         {
@@ -127,12 +127,12 @@ namespace VoxelRenderTest
             }
         }
 
-        public override IEnumerable<TraceResult> Intersect(Vector3 pos)
+        public IEnumerable<TraceResult> Intersect(Vector3 pos)
         {
             return Intersect(pos, new Vector3(1.0f, 0.0f, 0.0f), false);
         }
 
-        public override IEnumerable<TraceResult> Intersect(Vector3 pos, Vector3 dir, bool query)
+        public IEnumerable<TraceResult> Intersect(Vector3 pos, Vector3 dir, bool query)
         {
             Vector3 hitStart, hitEnd;
             List<Vector3i> hitList = _ddaTracer.Trace(pos, dir, out hitStart, out hitEnd, query);

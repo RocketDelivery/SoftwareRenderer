@@ -39,6 +39,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DDATracer.cs" />
+    <Compile Include="Fragment.cs" />
+    <Compile Include="FragmentShader.cs" />
+    <Compile Include="RasterInfo.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="RenderJobState.cs" />
     <Compile Include="Triangle.cs" />
@@ -57,7 +61,6 @@
     <Compile Include="MeshVoxel1.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="SATCollisionSolver.cs" />
-    <Compile Include="Traceable.cs" />
     <Compile Include="TraceResult.cs" />
     <Compile Include="Vector3i.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

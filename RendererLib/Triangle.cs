@@ -21,5 +21,12 @@ namespace VoxelRenderTest
             _p1 = p1;
             _p2 = p2;
         }
+
+        public Vector3 Normal()
+        {
+            Vector3 normal = Vector3.Cross(_p1 - _p0, _p2 - _p0);
+            normal = Vector3.Normalize(normal);
+            return normal;
+        }
     }
 }
