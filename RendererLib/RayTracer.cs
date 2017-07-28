@@ -108,28 +108,5 @@ namespace VoxelRenderTest
             }
             return traceResult;
         }
-
-        private void CalculateViewRay(Matrix4x4 transformInv, int screenX, int screenY, out Vector3 pos, out Vector3 dir)
-        {
-            float worldX = ScreenToWorldCoordX(screenX);
-            float worldY = ScreenToWorldCoordY(screenY);
-            Vector4 viewRayPosNear = new Vector4(worldX, worldY, 0.0f, 1.0f);
-            Vector4 viewRayPosFar = new Vector4(worldX, worldY, 1.0f, 1.0f);
-            viewRayPosNear = Vector4.Transform(viewRayPosNear, transformInv);
-            viewRayPosFar = Vector4.Transform(viewRayPosFar, transformInv);
-
-            Vector3 viewRayPosNear3 = new Vector3(
-                viewRayPosNear.X / viewRayPosNear.W,
-                viewRayPosNear.Y / viewRayPosNear.W,
-                viewRayPosNear.Z / viewRayPosNear.W);
-            Vector3 viewRayPosFar3 = new Vector3(
-                viewRayPosFar.X / viewRayPosFar.W,
-                viewRayPosFar.Y / viewRayPosFar.W,
-                viewRayPosFar.Z / viewRayPosFar.W);
-            Vector3 viewRayDir3 = viewRayPosFar3 - viewRayPosNear3;
-            viewRayDir3 = Vector3.Normalize(viewRayDir3);
-            pos = viewRayPosNear3;
-            dir = viewRayDir3;
-        }
     }
 }

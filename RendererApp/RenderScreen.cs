@@ -38,7 +38,7 @@ namespace VoxelRenderTest
         
         public RenderScreen()
         {
-            _objMesh = ModelLoader.LoadObj("D:\\Downloads\\box.obj");
+            _objMesh = ModelLoader.LoadObj("D:\\Downloads\\gourd.obj");
             //_voxelMesh1 = new MeshVoxel1(64, 64, 64, new Vector3(-2f, -2f, -2f), new Vector3(2f, 2f, 2f));
             //_voxelMesh1.LoadMesh(_objMesh, 4);
             _xPen.Width = 2;
@@ -47,7 +47,8 @@ namespace VoxelRenderTest
                         
             InitializeComponent();
 
-            _renderer = new RayTracer();
+            _renderer = //new RayTracer();
+                new DDATracer(new Vector3(-2f, -2f, -2f), new Vector3(2f, 2f, 2f), 64, 64, 64);
             if(!_renderer.Load(_objMesh))
             {
                 Console.WriteLine("Could not load mesh!");
