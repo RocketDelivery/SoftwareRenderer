@@ -127,6 +127,10 @@ namespace VoxelRenderTest
                     hitCoord = coord;
                     return true;
                 }
+/*              Note: this may be used to vectorize the code block below
+ *                  bvec3 mask = abs(vec3(min(tVec.X, min(tVec.Y, tVecZ))) - tVec) < vec3(epsilon);
+ *                  coord += mask * cellDelta;
+ */
                 if(tVec.X < tVec.Y)
                 {
                     if(tVec.X < tVec.Z)
