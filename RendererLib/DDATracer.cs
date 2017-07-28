@@ -60,7 +60,7 @@ namespace VoxelRenderTest
         {
             Vector3 cellSize = CellSize;
             Vector3 pos, dir;
-            Vector3i coord;
+            Vector3i coord = new Vector3i();
             Vector3 hitStart, hitEnd;
             Matrix4x4 mvpMatInv = viewFrustumMatInv * modelMatInv;
             Matrix4x4 mvpMat = modelMat * viewFrustumMat;
@@ -69,7 +69,7 @@ namespace VoxelRenderTest
                 for(int x = xLow; x < xHigh; ++x)
                 {
                     CalculateViewRay(mvpMatInv, x, y, out pos, out dir);
-                    if(TraceClosest(pos, dir, out coord, out hitStart, out hitEnd))
+                    if(Trace(pos, dir, out hitStart, out hitEnd, ref coord))
                     {
                         int index = GetIndex(coord.X, coord.Y, coord.Z);
                         yield return new RasterInfo()
@@ -86,28 +86,12 @@ namespace VoxelRenderTest
                 }
             }
         }
-
-        public bool TraceClosest(Vector3 pos, Vector3 dir, out Vector3i coord, out Vector3 hitStart, out Vector3 hitEnd)
+        
+        public bool Trace(Vector3 pos, Vector3 dir, out Vector3 hitStart, out Vector3 hitEnd, ref Vector3i hitCoord)
         {
-            List<Vector3i> hitList = Trace(pos, dir, out hitStart, out hitEnd);
-            if(hitList.Any())
-            {
-                coord = hitList.First();
-                return true;
-            }
-            else
-            {
-                coord = new Vector3i(0, 0, 0);
-                return false;
-            }
-        }
-
-        public List<Vector3i> Trace(Vector3 pos, Vector3 dir, out Vector3 hitStart, out Vector3 hitEnd)
-        {
-            List<Vector3i> hitList = new List<Vector3i>();
             if(!IntersectBound(pos, dir, out hitStart, out hitEnd))
             {
-                return hitList;
+                return false;
             }
             Vector3 cellSize = CellSize;
             Vector3 posRel = (hitStart - _boundLow);
@@ -117,112 +101,60 @@ namespace VoxelRenderTest
                 posRel.Z / cellSize.Z);
 
             float dtx, dty, dtz;
-            float tx, ty, tz;
-            if(dir.X >= 0.0f)
-            {
-                tx = (((float)Math.Floor(posRelCell.X) + 1.0f) * cellSize.X - posRel.X) / dir.X;
-            }
-            else
-            {
-                tx = ((float)Math.Floor(posRelCell.X) * cellSize.X - posRel.X) / dir.X;
-            }
-            if (dir.Y >= 0.0f)
-            {
-                ty = (((float)Math.Floor(posRelCell.Y) + 1.0f) * cellSize.Y - posRel.Y) / dir.Y;
-            }
-            else
-            {
-                ty = ((float)Math.Floor(posRelCell.Y) * cellSize.Y - posRel.Y) / dir.Y;
-            }
-            if (dir.Z >= 0.0f)
-            {
-                tz = (((float)Math.Floor(posRelCell.Z) + 1.0f) * cellSize.Z - posRel.Z) / dir.Z;
-            }
-            else
-            {
-                tz = ((float)Math.Floor(posRelCell.Z) * cellSize.Z - posRel.Z) / dir.Z;
-            }
+            Vector3 tVec = new Vector3();
+            Vector3 add = new Vector3(
+                Math.Sign(dir.X),
+                Math.Sign(dir.Y),
+                Math.Sign(dir.Z));
+            add = Vector3.Clamp(add, new Vector3(0.0f), new Vector3(1.0f));
+            tVec =
+                ((new Vector3((float)Math.Floor(posRelCell.X), (float)Math.Floor(posRelCell.Y), (float)Math.Floor(posRelCell.Z)) +
+                add) * cellSize - posRel) / dir;
+            dtx = Math.Sign(dir.X) * cellSize.X / dir.X;
+            dty = Math.Sign(dir.Y) * cellSize.Y / dir.Y;
+            dtz = Math.Sign(dir.Z) * cellSize.Z / dir.Z;
 
-            dtx = cellSize.X / dir.X;
-            if (dir.X < 0.0f)
-            {
-                dtx *= -1;
-            }
-            dty = cellSize.Y / dir.Y;
-            if (dir.Y < 0.0f)
-            {
-                dty *= -1;
-            }
-            dtz = cellSize.Z / dir.Z;
-            if (dir.Z < 0.0f)
-            {
-                dtz *= -1;
-            }
-
+            Vector3i cellDelta = new Vector3i(
+                Math.Sign(dir.X),
+                Math.Sign(dir.Y),
+                Math.Sign(dir.Z));
             Vector3i coord = new Vector3i((int)posRelCell.X, (int)posRelCell.Y, (int)posRelCell.Z);
             while(IsCurrentlyInside(coord))
             {
                 int index = GetIndex(coord.X, coord.Y, coord.Z);
                 if(_voxelData[index]._occupied)
                 {
-                    hitList.Add(coord);
+                    hitCoord = coord;
+                    return true;
                 }
-                if(tx < ty)
+                if(tVec.X < tVec.Y)
                 {
-                    if(tx < tz)
+                    if(tVec.X < tVec.Z)
                     {
-                        tx += dtx;
-                        if(dir.X >= 0)
-                        {
-                            ++coord.X;
-                        }
-                        else
-                        {
-                            --coord.X;
-                        }
+                        tVec.X += dtx;
+                        coord.X += cellDelta.X;
                     }
                     else
                     {
-                        tz += dtz;
-                        if(dir.Z >= 0)
-                        {
-                            ++coord.Z;
-                        }
-                        else
-                        {
-                            --coord.Z;
-                        }
+                        tVec.Z += dtz;
+                        coord.Z += cellDelta.Z;
                     }
                 }
                 else
                 {
-                    if(ty < tz)
+                    if(tVec.Y < tVec.Z)
                     {
-                        ty += dty;
-                        if(dir.Y >= 0)
-                        {
-                            ++coord.Y;
-                        }
-                        else
-                        {
-                            --coord.Y;
-                        }
+                        tVec.Y += dty;
+                        coord.Y += cellDelta.Y;
                     }
                     else
                     {
-                        tz += dtz;
-                        if(dir.Z >= 0)
-                        {
-                            ++coord.Z;
-                        }
-                        else
-                        {
-                            --coord.Z;
-                        }
+                        tVec.Z += dtz;
+                        coord.Z += cellDelta.Z;
                     }
                 }
             }
-            return hitList;
+            return false;
         }
         
         private bool IntersectBound(Vector3 pos, Vector3 dir, out Vector3 startPos, out Vector3 endPos)
