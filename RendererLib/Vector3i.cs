@@ -84,5 +84,19 @@ namespace VoxelRenderTest
         {
             return _x + " " + _y + " " + _z;
         }
+
+        public override bool Equals(object obj)
+        {
+            if(!(obj is Vector3i))
+                return false;
+
+            Vector3i other = (Vector3i)obj;
+            return this == other;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
