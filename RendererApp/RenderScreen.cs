@@ -38,7 +38,7 @@ namespace VoxelRenderTest
         
         public RenderScreen()
         {
-            _objMesh = ModelLoader.LoadObj("D:\\Downloads\\gourd.obj");
+            _objMesh = ModelLoader.LoadObj("D:\\Downloads\\box.obj");
             //_voxelMesh1 = new MeshVoxel1(64, 64, 64, new Vector3(-2f, -2f, -2f), new Vector3(2f, 2f, 2f));
             //_voxelMesh1.LoadMesh(_objMesh, 4);
             _xPen.Width = 2;
